@@ -9,7 +9,7 @@ module ActiveRecord
           def self.inherited(child)
             begin
               self.class_eval do
-                sti_enum type: {child.to_s.underscore.to_sym => child.to_s}
+                add_enum type: {child.to_s.underscore.to_sym => child.to_s}
               end
             ensure
               super
@@ -22,10 +22,10 @@ module ActiveRecord
       end
 
       module ClassMethods
-        def sti_enum(definitions)
+        def add_enum definitions
           klass = self
           definitions.each do |name, values|
-            enum_values = ActiveSupport::HashWithIndifferentAccess.new
+            enum_values = defined_enums[name.to_s] ||= ActiveSupport::HashWithIndifferentAccess.new
             name        = name.to_sym
 
             klass.singleton_class.send(:define_method, name.to_s.pluralize) { enum_values }
