@@ -33,13 +33,12 @@ module ActiveRecord
             _enum_methods_module.module_eval do
               pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
               pairs.each do |value, i|
-                value_method_name = value
                 enum_values[value] = i
 
-                define_method("#{value_method_name}?") { self[name] == value.to_s }
-                define_method("#{value_method_name}!") { update! name => value }
+                define_method("#{value}?") { self[name] == i }
+                define_method("#{value}!") { update! name => value }
 
-                klass.scope value_method_name, -> { klass.where name => value }
+                klass.scope value, -> { klass.where name => i }
               end
             end
             defined_enums[name.to_s] = enum_values
