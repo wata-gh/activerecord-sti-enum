@@ -1,0 +1,60 @@
+require "activerecord/sti/enum/version"
+
+module ActiveRecord
+  module Sti
+    module Enum
+      def self.included(klass)
+        klass.extend ClassMethods
+        klass.class_eval do
+          def self.inherited(child)
+            begin
+              self.class_eval do
+                sti_enum type: {child.to_s.underscore.to_sym => child.to_s}
+              end
+            ensure
+              super
+            end
+          end
+        end
+        Dir.glob('./app/models/*.rb').each do |f|
+          require File.basename(f)
+        end
+      end
+
+      module ClassMethods
+        def sti_enum(definitions)
+          klass = self
+          definitions.each do |name, values|
+            enum_values = ActiveSupport::HashWithIndifferentAccess.new
+            name        = name.to_sym
+
+            klass.singleton_class.send(:define_method, name.to_s.pluralize) { enum_values }
+
+            _enum_methods_module.module_eval do
+              pairs = values.respond_to?(:each_pair) ? values.each_pair : values.each_with_index
+              pairs.each do |value, i|
+                value_method_name = value
+                enum_values[value] = i
+
+                define_method("#{value_method_name}?") { self[name] == value.to_s }
+                define_method("#{value_method_name}!") { update! name => value }
+
+                klass.scope value_method_name, -> { klass.where name => value }
+              end
+            end
+            defined_enums[name.to_s] = enum_values
+          end
+        end
+      end
+
+      private
+      def _enum_methods_module
+        @_enum_methods_module ||= begin
+          mod = Module.new
+          include mod
+          mod
+        end
+      end
+    end
+  end
+end
