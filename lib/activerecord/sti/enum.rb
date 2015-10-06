@@ -9,7 +9,7 @@ module ActiveRecord
           def self.inherited(child)
             begin
               self.class_eval do
-                add_enum type: {child.to_s.underscore.to_sym => child.to_s}
+                add_enum {inheritance_column => {child.to_s.underscore.to_sym => child.to_s}}
               end
             ensure
               super
