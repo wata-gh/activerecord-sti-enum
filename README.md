@@ -1,8 +1,6 @@
-# Activerecord::Sti::Enum
+# ActiveRecord::Sti::Enum
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/activerecord/sti/enum`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Automatically creates enums of STI.
 
 ## Installation
 
@@ -22,7 +20,11 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Just include ActiveRecord::Sti::Enum to parent model of STI.
+
+```ruby
+include ActiveRecord::Sti::Enum
+```
 
 ## Development
 
@@ -32,5 +34,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/activerecord-sti-enum.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/wata-gh/activerecord-sti-enum.
